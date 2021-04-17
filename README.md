@@ -1,1 +1,1 @@
-# Custom-Object-Detection-with-TFOD-API-Connector
+# Custom-Object-Detection-with-TFOD-API
