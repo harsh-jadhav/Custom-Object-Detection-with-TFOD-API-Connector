@@ -4,7 +4,7 @@
 
 - You need **'models'** folder which can be reetrived through following link
 
-  **https://github.com/tensorflow/models.gitgit clone https://github.com/tensorflow/models.git**
+  **https://github.com/tensorflow/models.git**
 
 - Need **'exported_models'** folder which can be reetrived through following link   
   
