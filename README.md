@@ -1,5 +1,5 @@
 # Custom-Object-Detection-with-TFOD-API
-
+- **Tools Used:** *tensorflow 2.2.0, open-cv, Google Colaboratory, tensorflow-object-detection-api*
 **Note:** 
 
 - You need **'models'** folder which can be reetrived through following link
