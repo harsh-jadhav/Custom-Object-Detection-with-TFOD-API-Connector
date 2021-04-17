@@ -24,34 +24,45 @@ app = Flask(__name__)
 @app.route('/', methods=['GET', 'POST']) 
 def main_page():
     if request.method == 'POST':
-        file = request.files['file']
-        filename = secure_filename(file.filename)
-        file.save(os.path.join('uploads', filename))
-        return redirect(url_for('detection', filename=filename))
-    return render_template('index.html')
+        import numpy as np
+        import cv2
+
+        # Using OpenCV to initialize the webcam
+        cap = cv2.VideoCapture(0) # put 0 for webcam input or 'filename.mp4' for video file in disk
+
+        while cap.isOpened():
+            ret, image_np = cap.read()
+            
+            detections = run_inference_for_single_image(model, image_np)
+
+            label_id_offset = 1
+            
+            image_np_with_detections = image_np.copy()
+
+            vis_util.visualize_boxes_and_labels_on_image_array(
+                  image_np_with_detections,
+                  detections['detection_boxes'],
+                  (detections['detection_classes']+ label_id_offset).astype(int),
+                  detections['detection_scores'],
+                  category_index,
+                  use_normalized_coordinates=True,
+                  max_boxes_to_draw=200,
+                  min_score_thresh=.50,
+                  line_thickness=4,
+                  agnostic_mode=False)
+            
+        #     display(Image.fromarray(image_np_with_detections))
+            cv2.imshow('connector', image_np_with_detections)
+            if cv2.waitKey(1) == 13: #13 is the Enter Key
+                break
+                
+    # Release camera and close windows
+    cap.release()
+    cv2.destroyAllWindows()  
 
 
-@app.route('/detection/<filename>') 
-def detection(filename):
 
-    # Make prediction
-    image_path = filename
-    
-    image_np = load_image_into_numpy_array(image_path)
-    output_dict = run_inference_for_single_image(model, image_np)
-    vis_util.visualize_boxes_and_labels_on_image_array(
-      image_np,
-      output_dict['detection_boxes'],
-      output_dict['detection_classes'],
-      output_dict['detection_scores'],
-      category_index,
-      instance_masks=output_dict.get('detection_masks_reframed', None),
-      use_normalized_coordinates=True,
-      line_thickness=8)
 
-    cv2.imshow(Image.fromarray(image_np))
-    # new_img.save("Output.png","PNG")
-    # return render_template('base.html')
 if __name__ == '__main__':
     app.run(debug=True)
 
